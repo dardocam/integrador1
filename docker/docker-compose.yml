@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    # Se agrega la opción para omitir la verificación de permisos.
+    command: --skip-grant-tables
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      # MYSQL_DATABASE: desarrollo
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../entorno/mysql-data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: 
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+
+
+  java-app:
+    image: maven:3.8.6-eclipse-temurin-17
+    container_name: java-app
+    volumes:
+      - ../app:/usr/src/app      
+      - ../entorno/maven-repo:/root/.m2  # Cachear dependencias
+    working_dir: /usr/src/app
+    ports:
+      - "8081:8080"  # Ajusta según el puerto de tu aplicación
+    command: mvn clean compile exec:java 
+    # command: mvn clean package compile exec:java -Dexec.mainClass="com.tp1.App" -Dexec.args="arg1 arg2"
+    # command: mvn clean install
+    depends_on:
+        - mysql
+volumes:
+  mysql-data:
+  maven-repo:
+

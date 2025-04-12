@@ -1,0 +1,12 @@
+com/app/Main.class
+com/app/dao/ClienteDAO.class
+com/app/dao/ProductoDAO.class
+com/app/entities/FacturaProducto.class
+com/app/factory/MySQLDAOFactory.class
+com/app/dao/FacturaDAO.class
+com/app/entities/Factura.class
+com/app/factory/AbstractFactoryDAO.class
+com/app/utils/HelperMySQL.class
+com/app/dao/FacturaProductoDAO.class
+com/app/entities/Producto.class
+com/app/entities/Cliente.class
