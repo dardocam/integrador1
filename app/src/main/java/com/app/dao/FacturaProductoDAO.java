@@ -35,14 +35,6 @@ public class FacturaProductoDAO {
         ps.setInt(3, item.getCantidad());
 
         ps.addBatch(); // Agregar la instrucción al batch
-        logger.info(
-          "Item agregado al batch: " +
-          item.getIdFactura() +
-          ", " +
-          item.getIdProducto() +
-          ", " +
-          item.getCantidad()
-        );
       }
 
       ps.executeBatch(); // Ejecutar todas las instrucciones en el batch

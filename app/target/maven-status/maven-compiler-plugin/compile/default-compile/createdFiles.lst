@@ -1,9 +1,11 @@
+com/app/dto/ClienteDTO.class
 com/app/Main.class
 com/app/dao/ClienteDAO.class
 com/app/dao/ProductoDAO.class
 com/app/entities/FacturaProducto.class
 com/app/factory/MySQLDAOFactory.class
 com/app/dao/FacturaDAO.class
+com/app/dto/ProductoDTO.class
 com/app/entities/Factura.class
 com/app/factory/AbstractFactoryDAO.class
 com/app/utils/HelperMySQL.class

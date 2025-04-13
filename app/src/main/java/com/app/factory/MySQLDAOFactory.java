@@ -10,7 +10,8 @@ public class MySQLDAOFactory extends AbstractFactoryDAO {
 
   private static MySQLDAOFactory INSTANCE = null;
 
-  public static String uri = "jdbc:mysql://mysql:3306/integrador1";
+  public static String uriLocalhost = "jdbc:mysql://localhost:3306/integrador1";
+  public static String uriForDocker = "jdbc:mysql://mysql:3306/integrador1";
 
   public static Connection conn;
 
@@ -23,16 +24,9 @@ public class MySQLDAOFactory extends AbstractFactoryDAO {
     return INSTANCE;
   }
 
-  public static String getUri() {
-    return uri;
-  }
-
   public Connection createConnection() {
-    if (conn != null) {
-      return conn;
-    }
     try {
-      conn = DriverManager.getConnection(uri, "root", "");
+      conn = DriverManager.getConnection(uriLocalhost, "root", "");
       conn.setAutoCommit(false);
       System.out.println("Conexión establecida exitosamente.");
     } catch (SQLException e) {

@@ -32,12 +32,6 @@ public class FacturaDAO {
         ps.setInt(1, factura.getIdFactura());
         ps.setInt(2, factura.getIdCliente());
         ps.addBatch(); // Agregar la instrucción al batch
-        logger.info(
-          "Factura agregada al batch: " +
-          factura.getIdFactura() +
-          ", " +
-          factura.getIdCliente()
-        );
       }
 
       ps.executeBatch(); // Ejecutar todas las instrucciones en el batch

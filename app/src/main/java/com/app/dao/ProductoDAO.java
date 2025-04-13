@@ -1,5 +1,7 @@
 package com.app.dao;
 
+import com.app.Main;
+import com.app.dto.ProductoDTO;
 import com.app.entities.Producto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,19 +13,18 @@ import org.slf4j.LoggerFactory;
 
 public class ProductoDAO {
 
-  private static final Logger logger = LoggerFactory.getLogger(
-    ProductoDAO.class
-  );
+  private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
   private final Connection conn;
 
   public ProductoDAO(Connection conn) {
     this.conn = conn;
   }
 
-  public Producto getProductoMasRecaudador() {
-    Producto producto = null;
+  public ProductoDTO getProductoMasRecaudador() {
+    ProductoDTO productoDTO = null;
     String sql =
-      "SELECT p.idProducto, p.nombre, p.valor, (SUM(fp.cantidad) * p.valor) AS recaudacion " +
+      "SELECT p.nombre, (SUM(fp.cantidad) * p.valor) AS recaudacion " +
       "FROM Producto p " +
       "JOIN Factura_Producto fp ON p.idProducto = fp.idProducto " +
       "GROUP BY p.idProducto, p.nombre, p.valor " +
@@ -39,12 +40,10 @@ public class ProductoDAO {
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
-          int idProducto = rs.getInt("idProducto");
           String nombre = rs.getString("nombre");
-          double valor = rs.getDouble("valor");
           double recaudacion = rs.getDouble("recaudacion");
 
-          producto = new Producto(idProducto, nombre, valor, recaudacion);
+          productoDTO = new ProductoDTO(nombre, recaudacion);
         }
         conn.commit();
       }
@@ -59,17 +58,10 @@ public class ProductoDAO {
         }
       }
     }
-    if (producto != null) {
-      logger.info(
-        "El producto más recaudador es: " +
-        producto.getNombre() +
-        " con un valor de: " +
-        producto.getRecaudacion()
-      );
-    } else {
+    if (productoDTO == null) {
       logger.info("No se encontraron productos.");
     }
-    return producto;
+    return productoDTO != null ? productoDTO : ProductoDTO.EMPTY;
   }
 
   public void insertProducto(Producto producto) {
@@ -119,14 +111,6 @@ public class ProductoDAO {
         ps.setString(2, producto.getNombre());
         ps.setDouble(3, producto.getValor());
         ps.addBatch(); // Agregar la instrucción al batch
-        logger.info(
-          "Producto agregado al batch: " +
-          producto.getIdProducto() +
-          ", " +
-          producto.getNombre() +
-          ", " +
-          producto.getValor()
-        );
       }
       ps.executeBatch(); // Ejecutar todas las instrucciones en el batch
       conn.commit(); // Confirmar la transacción

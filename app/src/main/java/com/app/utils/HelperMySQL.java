@@ -4,6 +4,8 @@ import com.app.dao.ClienteDAO;
 import com.app.dao.FacturaDAO;
 import com.app.dao.FacturaProductoDAO;
 import com.app.dao.ProductoDAO;
+import com.app.dto.ClienteDTO;
+import com.app.dto.ProductoDTO;
 import com.app.entities.Cliente;
 import com.app.entities.Factura;
 import com.app.entities.FacturaProducto;
@@ -324,16 +326,16 @@ public class HelperMySQL {
     }
   }
 
-  public String getProductoMasRecaudador() {
+  public void getProductoMasRecaudador() {
     ProductoDAO productoDAO = new ProductoDAO(conn);
-    Producto productoMasRecaudador = productoDAO.getProductoMasRecaudador();
-    return productoMasRecaudador.toString();
+    ProductoDTO productoMasRecaudador = productoDAO.getProductoMasRecaudador();
+    logger.info(productoMasRecaudador.toString());
   }
 
   public void getClientesMasFacturados() {
     ClienteDAO clienteDAO = new ClienteDAO(conn);
-    List<Cliente> clientesMasFacturados = clienteDAO.getClientesMasFacturados();
-    for (Cliente cliente : clientesMasFacturados) {
+    List<ClienteDTO> clientesMasFacturados = clienteDAO.getClientesMasFacturados();
+    for (ClienteDTO cliente : clientesMasFacturados) {
       logger.info(cliente.toString());
     }
   }

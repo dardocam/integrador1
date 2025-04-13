@@ -1,5 +1,6 @@
 package com.app.dao;
 
+import com.app.dto.ClienteDTO;
 import com.app.entities.Cliente;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,14 +36,6 @@ public class ClienteDAO {
         ps.setString(2, cliente.getNombre());
         ps.setString(3, cliente.getEmail());
         ps.addBatch(); // Agregar la instrucción al batch
-        logger.info(
-          "Cliente agregado al batch: " +
-          cliente.getIdCliente() +
-          ", " +
-          cliente.getNombre() +
-          ", " +
-          cliente.getEmail()
-        );
       }
 
       ps.executeBatch(); // Ejecutar todas las instrucciones en el batch
@@ -67,10 +60,10 @@ public class ClienteDAO {
     }
   }
 
-  public List<Cliente> getClientesMasFacturados() {
+  public List<ClienteDTO> getClientesMasFacturados() {
     // Consulta SQL para obtener la facturación total por cliente
     String query =
-      "SELECT c.idCliente, c.nombre, email, SUM(fp.cantidad * p.valor) AS total_facturado " +
+      "SELECT c.nombre, SUM(fp.cantidad * p.valor) AS total_facturado " +
       "FROM Cliente c " +
       "JOIN Factura f ON c.idCliente = f.idCliente " +
       "JOIN Factura_Producto fp ON f.idFactura = fp.idFactura " +
@@ -79,24 +72,17 @@ public class ClienteDAO {
       "ORDER BY total_facturado DESC";
 
     PreparedStatement ps = null;
-    List<Cliente> clientes = new ArrayList<>();
+    List<ClienteDTO> clientesDTO = new ArrayList<>();
     try {
       conn.setAutoCommit(false); // Desactivar auto-commit para manejar la transacción manualmente
       ps = conn.prepareStatement(query);
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
-          int idCliente = rs.getInt("idCliente");
           String nombre = rs.getString("nombre");
-          String email = rs.getString("email");
           Double totalFacturado = rs.getDouble("total_facturado");
 
-          Cliente cliente = new Cliente(
-            idCliente,
-            nombre,
-            email,
-            totalFacturado
-          );
-          clientes.add(cliente);
+          ClienteDTO clienteDTO = new ClienteDTO(nombre, totalFacturado);
+          clientesDTO.add(clienteDTO);
         }
       }
       conn.commit(); // Confirmar la transacción
@@ -120,7 +106,7 @@ public class ClienteDAO {
         logger.error("Error al cerrar el PreparedStatement: ", e); // Registrar el error
       }
     }
-    return clientes;
+    return clientesDTO;
   }
   // Métodos adicionales (crear, actualizar, eliminar, listar, etc.) se pueden agregar según las necesidades.
 }
